@@ -6,7 +6,7 @@
   "module": "dist/botium-connector-echo-es.js",
   "scripts": {
     "build": "npm run eslint && rollup -c",
-    "eslint": "eslint \"./src/**/*.js\" \"./test/**/*.js\""
+    "eslint": "eslint index.js"
   },
   "repository": {
     "type": "git",
