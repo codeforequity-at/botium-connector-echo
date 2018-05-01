@@ -6,12 +6,12 @@ export default {
   input: 'index.js',
   output: [
     {
-      file: 'dist/botium-es.js',
+      file: 'dist/botium-connector-echo-es.js',
       format: 'es',
       sourcemap: true
     },
     {
-      file: 'dist/botium-cjs.js',
+      file: 'dist/botium-connector-echo-cjs.js',
       format: 'cjs',
       sourcemap: true
     }

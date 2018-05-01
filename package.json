@@ -2,8 +2,8 @@
   "name": "botium-connector-echo",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/botium-cjs.js",
-  "module": "dist/botium-es.js",
+  "main": "dist/botium-connector-echo-cjs.js",
+  "module": "dist/botium-connector-echo-es.js",
   "scripts": {
     "build": "npm run eslint && rollup -c",
     "eslint": "eslint \"./src/**/*.js\" \"./test/**/*.js\""
