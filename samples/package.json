@@ -1,0 +1,17 @@
+{
+  "name": "samples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "botiumFluent.js",
+  "scripts": {
+    "start": "node botiumFluent.js",
+    "emulator": "npm install botium-cli && botium-cli emulator"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "botium-connector-echo": "../",
+    "botium-core": "*"
+  }
+}
