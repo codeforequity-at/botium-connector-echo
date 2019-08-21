@@ -1,0 +1,4 @@
+should fail with forced error
+
+#me
+fail

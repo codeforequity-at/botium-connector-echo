@@ -1,0 +1,19 @@
+button
+
+#me
+give me buttons
+
+#bot
+BUTTONS First Button|Second Button
+
+#me
+BUTTON First Button
+
+#bot
+BUTTON PRESSED: First Button
+
+#me
+BUTTON Second Button
+
+#bot
+BUTTON PRESSED: Second Button

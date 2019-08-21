@@ -1,0 +1,8 @@
+help
+
+#me
+help
+
+#bot
+Recognized commands:
+INTENT help
