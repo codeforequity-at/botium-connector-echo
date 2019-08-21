@@ -1,0 +1,28 @@
+cart
+
+#me
+add to cart 5 bananas
+
+#bot
+Added to cart: 5 bananas
+INTENT addtocart
+ENTITIES product|..
+ENTITY_VALUES 5 bananas|..
+
+#me
+add to cart 1 kiwi
+
+#bot
+Added to cart: 1 kiwi
+
+#me
+show cart
+
+#bot
+In your cart: 5 bananas, 1 kiwi
+
+#me
+clear cart
+
+#bot
+Your cart is now empty

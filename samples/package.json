@@ -4,14 +4,28 @@
   "description": "",
   "main": "botiumFluent.js",
   "scripts": {
-    "start": "node botiumFluent.js",
-    "emulator": "npm install botium-cli && botium-cli emulator"
+    "test": "mocha spec",
+    "mocha": "mocha spec"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "botium-connector-echo": "../",
-    "botium-core": "*"
+    "botium-bindings": "latest",
+    "mocha": "latest"
+  },
+  "botium": {
+    "convodirs": [
+      "spec\\convo"
+    ],
+    "expandConvos": true,
+    "expandUtterancesToConvos": false,
+    "expandScriptingMemoryToConvos": false
+  },
+  "devDependencies": {
+    "mocha": "latest",
+    "botium-bindings": "latest",
+    "botium-connector-echo": "latest"
   }
 }
