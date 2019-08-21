@@ -195,7 +195,13 @@ class BotiumConnectorEcho {
   UserSays (msg) {
     debug('UserSays called, echo back')
 
-    let botMsg = { sender: 'bot', sourceData: msg }
+    let botMsg = {
+      sender: 'bot',
+      sourceData: {
+        request: msg,
+        session: this.session
+      }
+    }
 
     if (msg.buttons && msg.buttons.length > 0) {
       botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text}`
