@@ -210,8 +210,7 @@ class BotiumConnectorEcho {
     let botMsg = {
       sender: 'bot',
       sourceData: {
-        request: msg,
-        session: this.session
+        request: msg
       }
     }
 
@@ -230,6 +229,7 @@ class BotiumConnectorEcho {
       }
     }
 
+    botMsg.sourceData.session = JSON.parse(JSON.stringify(this.session))
     setTimeout(() => this.queueBotSays(botMsg), 0)
   }
 
