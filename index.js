@@ -5,10 +5,11 @@ const debug = require('debug')('botium-connector-echo')
 class BotiumConnectorEcho {
   constructor ({ queueBotSays }) {
     this.queueBotSays = queueBotSays
+    this.session = {}
     this.answers = [
       {
         input: ['help'],
-        output: () => ({
+        output: (msg, session) => ({
           messageText: 'Recognized commands: ' + this.answers.map(a => a.input.join(', ')).join(', '),
           nlp: {
             intent: {
@@ -20,16 +21,16 @@ class BotiumConnectorEcho {
       },
       {
         input: ['fail'],
-        output: () => {
+        output: (msg, session) => {
           throw new Error('Here is a delivery failure')
         }
       },
       {
         input: ['add to cart'],
-        output: (msg) => {
+        output: (msg, session) => {
           const item = msg.messageText.substr(11).trim()
-          if (!this.session.cart) this.session.cart = []
-          this.session.cart.push(item)
+          if (!session.cart) session.cart = []
+          session.cart.push(item)
           return {
             messageText: `Added to cart: ${item}`,
             nlp: {
@@ -46,9 +47,9 @@ class BotiumConnectorEcho {
       },
       {
         input: ['show cart'],
-        output: (msg) => {
+        output: (msg, session) => {
           return {
-            messageText: `In your cart: ${(this.session.cart || []).join(', ')}`,
+            messageText: `In your cart: ${(session.cart || []).join(', ')}`,
             nlp: {
               intent: {
                 name: 'showcart',
@@ -60,8 +61,8 @@ class BotiumConnectorEcho {
       },
       {
         input: ['clear cart'],
-        output: (msg) => {
-          this.session.cart = []
+        output: (msg, session) => {
+          session.cart = []
           return {
             messageText: 'Your cart is now empty',
             nlp: {
@@ -156,22 +157,33 @@ class BotiumConnectorEcho {
       },
       {
         input: ['attachment', 'audio attachment'],
-        output: () => ({
-          messageText: 'An audio is attached to this message',
-          attachments: [
-            {
-              name: 'file_example_MP3_700KB.mp3',
-              mimeType: 'audio/mp3',
-              base64: Buffer.from(fs.readFileSync(path.join(__dirname, 'file_example_MP3_700KB.mp3'))).toString('base64')
-            }
-          ],
-          nlp: {
-            intent: {
-              name: 'attachment',
-              confidence: 0.8
+        output: (msg, session) => {
+          const audioFile = 'file_example_MP3_700KB.mp3'
+          let audioBuffer = null
+          if (fs.existsSync(path.join(__dirname, audioFile))) {
+            audioBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, audioFile)))
+          } else if (fs.existsSync(path.join(__dirname, '..', audioFile))) {
+            audioBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, '..', audioFile)))
+          } else {
+            throw new Error(`Audio file ${audioFile} not found`)
+          }
+          return {
+            messageText: 'An audio is attached to this message',
+            attachments: [
+              {
+                name: audioFile,
+                mimeType: 'audio/mp3',
+                base64: audioBuffer.toString('base64')
+              }
+            ],
+            nlp: {
+              intent: {
+                name: 'attachment',
+                confidence: 0.8
+              }
             }
           }
-        })
+        }
       }
     ]
   }
@@ -211,7 +223,7 @@ class BotiumConnectorEcho {
         if (template.output.messageText) {
           botMsg = Object.assign(botMsg, template.output)
         } else {
-          botMsg = Object.assign(botMsg, template.output(msg))
+          botMsg = Object.assign(botMsg, template.output(msg, this.session))
         }
       } else {
         botMsg.messageText = 'You said: ' + msg.messageText
