@@ -1,8 +1,0 @@
-attachment
-
-#me
-audio attachment
-
-#bot
-An audio is attached to this message
-INTENT attachment

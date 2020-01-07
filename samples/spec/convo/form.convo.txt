@@ -1,0 +1,13 @@
+form
+
+#me
+form
+
+#bot
+Here is a form
+FORMS Username|Age|Female|Description
+
+#me
+FORM Username|guest
+BUTTON Submit
+

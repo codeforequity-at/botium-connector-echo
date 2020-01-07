@@ -184,6 +184,27 @@ class BotiumConnectorEcho {
             }
           }
         }
+      },
+      {
+        input: ['form'],
+        output: {
+          messageText: 'Here is a form',
+          buttons: [
+            { text: 'Some other button' }
+          ],
+          forms: [
+            { name: 'Username', value: 'God' },
+            { name: 'Age', value: 30 },
+            { name: 'Female', value: 'true' },
+            { name: 'Description' }
+          ],
+          nlp: {
+            intent: {
+              name: 'form',
+              confidence: 0.77
+            }
+          }
+        }
       }
     ]
   }
