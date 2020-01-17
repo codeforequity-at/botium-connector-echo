@@ -217,7 +217,7 @@ class BotiumConnectorEcho {
     if (msg.buttons && msg.buttons.length > 0) {
       botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text}`
     } else {
-      const template = this.answers.find(a => a.input.findIndex(u => msg.messageText.startsWith(u)) >= 0)
+      const template = this.answers.find(a => a.input.findIndex(u => msg.messageText && msg.messageText.startsWith(u)) >= 0)
       if (template) {
         if (template.output.messageText) {
           botMsg = Object.assign(botMsg, template.output)
@@ -225,7 +225,7 @@ class BotiumConnectorEcho {
           botMsg = Object.assign(botMsg, template.output(msg, this.session))
         }
       } else {
-        botMsg.messageText = 'You said: ' + msg.messageText
+        botMsg.messageText = 'You said: ' + (msg.messageText || '-')
       }
     }
 
