@@ -184,6 +184,36 @@ class BotiumConnectorEcho {
             }
           }
         }
+      },
+      {
+        input: ['video', 'video attachment'],
+        output: (msg, session) => {
+          const videoFile = 'mov_bbb.mp4'
+          let videoBuffer = null
+          if (fs.existsSync(path.join(__dirname, videoFile))) {
+            videoBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, videoFile)))
+          } else if (fs.existsSync(path.join(__dirname, '..', videoFile))) {
+            videoBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, '..', videoFile)))
+          } else {
+            throw new Error(`Video file ${videoFile} not found`)
+          }
+          return {
+            messageText: 'A video is attached to this message',
+            attachments: [
+              {
+                name: videoFile,
+                mimeType: 'video/mp4',
+                base64: videoBuffer.toString('base64')
+              }
+            ],
+            nlp: {
+              intent: {
+                name: 'video',
+                confidence: 0.8
+              }
+            }
+          }
+        }
       }
     ]
   }
