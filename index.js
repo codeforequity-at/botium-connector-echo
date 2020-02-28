@@ -1,10 +1,16 @@
 const fs = require('fs')
 const path = require('path')
+const _ = require('lodash')
 const debug = require('debug')('botium-connector-echo')
 
+const Capabilities = {
+  ECHO_ANSWERS: 'ECHO_ANSWERS'
+}
+
 class BotiumConnectorEcho {
-  constructor ({ queueBotSays }) {
+  constructor ({ queueBotSays, caps }) {
     this.queueBotSays = queueBotSays
+    this.caps = caps
     this.session = {}
     this.answers = [
       {
@@ -225,6 +231,14 @@ class BotiumConnectorEcho {
 
   Build () {
     debug('Build called')
+
+    if (this.caps[Capabilities.ECHO_ANSWERS]) {
+      const extraAnswers = _.isString(this.caps[Capabilities.ECHO_ANSWERS]) ? JSON.parse(this.caps[Capabilities.ECHO_ANSWERS]) : this.caps[Capabilities.ECHO_ANSWERS]
+      this.answers = this.answers.concat(extraAnswers)
+      for (const a of this.answers) {
+        if (_.isString(a.input)) a.input = [a.input]
+      }
+    }
     return Promise.resolve()
   }
 
@@ -245,14 +259,16 @@ class BotiumConnectorEcho {
     }
 
     if (msg.buttons && msg.buttons.length > 0) {
-      botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text}`
+      botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text || msg.buttons[0].payload}`
     } else {
       const template = this.answers.find(a => a.input.findIndex(u => msg.messageText && msg.messageText.startsWith(u)) >= 0)
-      if (template) {
-        if (template.output.messageText) {
-          botMsg = Object.assign(botMsg, template.output)
-        } else {
+      if (template && template.output) {
+        if (_.isFunction(template.output)) {
           botMsg = Object.assign(botMsg, template.output(msg, this.session))
+        } else if (_.isString(template.output)) {
+          botMsg.messageText = template.output
+        } else {
+          botMsg = Object.assign(botMsg, template.output)
         }
       } else {
         botMsg.messageText = 'You said: ' + (msg.messageText || '-')

@@ -1,0 +1,14 @@
+extra
+
+#me
+extra 1
+
+#bot
+extra answer 1
+
+#me
+extra 2
+
+#bot
+extra answer 2 (with nlp)
+INTENT extra2

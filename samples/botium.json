@@ -2,7 +2,25 @@
   "botium": {
     "Capabilities": {
       "PROJECTNAME": "Echo Plugin Sample",
-      "CONTAINERMODE": "echo"
+      "CONTAINERMODE": "echo",
+      "ECHO_ANSWERS": [
+        {
+          "input": "extra 1",
+          "output": "extra answer 1"
+        },
+        {
+          "input": "extra 2",
+          "output": {
+            "messageText": "extra answer 2 (with nlp)",
+            "nlp": {
+              "intent": {
+                "name": "extra2",
+                "confidence": 0.8
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }
