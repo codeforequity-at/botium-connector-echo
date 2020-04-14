@@ -129,7 +129,7 @@ class BotiumConnectorEcho {
         output: {
           messageText: 'Here is a picture',
           media: [
-            { altText: 'Botium Logo', mediaUri: 'http://www.botium.at/img/logo.png' }
+            { altText: 'Botium Logo', mediaUri: 'https://www.botium.ai/wp-content/uploads/2020/03/logo.png' }
           ],
           nlp: {
             intent: {
@@ -146,7 +146,7 @@ class BotiumConnectorEcho {
           cards: [
             {
               text: 'Botium is great!',
-              image: { mediaUri: 'http://www.botium.at/img/logo.png' },
+              image: { mediaUri: 'https://www.botium.ai/wp-content/uploads/2020/03/logo.png' },
               buttons: [
                 { text: 'First Button' },
                 { text: 'Second Button' }
