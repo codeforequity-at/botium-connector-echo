@@ -258,9 +258,6 @@ class BotiumConnectorEcho {
       }
     }
 
-    if (msg.buttons && msg.buttons.length > 0) {
-      botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text || msg.buttons[0].payload}`
-    } else {
       const template = this.answers.find(a => a.input.findIndex(u => msg.messageText && msg.messageText.startsWith(u)) >= 0)
       if (template && template.output) {
         if (_.isFunction(template.output)) {
@@ -273,7 +270,6 @@ class BotiumConnectorEcho {
       } else {
         botMsg.messageText = 'You said: ' + (msg.messageText || '-')
       }
-    }
 
     botMsg.sourceData.session = JSON.parse(JSON.stringify(this.session))
     setTimeout(() => this.queueBotSays(botMsg), 0)
