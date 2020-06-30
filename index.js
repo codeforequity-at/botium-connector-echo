@@ -4,7 +4,8 @@ const _ = require('lodash')
 const debug = require('debug')('botium-connector-echo')
 
 const Capabilities = {
-  ECHO_ANSWERS: 'ECHO_ANSWERS'
+  ECHO_ANSWERS: 'ECHO_ANSWERS',
+  ECHO_WELCOMEMESSAGE: 'ECHO_WELCOMEMESSAGE'
 }
 
 class BotiumConnectorEcho {
@@ -239,12 +240,32 @@ class BotiumConnectorEcho {
         if (_.isString(a.input)) a.input = [a.input]
       }
     }
+    if (this.caps[Capabilities.ECHO_WELCOMEMESSAGE]) {
+      this.welcomeMessage = _.isString(this.caps[Capabilities.ECHO_WELCOMEMESSAGE])
+        ? JSON.parse(this.caps[Capabilities.ECHO_WELCOMEMESSAGE])
+        : this.caps[Capabilities.ECHO_WELCOMEMESSAGE]
+    }
+
     return Promise.resolve()
   }
 
   Start () {
     debug('Start called')
     this.session = {}
+
+    if (this.welcomeMessage) {
+      let botMsg = {
+        sender: 'bot'
+      }
+      if (_.isFunction(this.welcomeMessage.output)) {
+        botMsg = Object.assign(botMsg, this.welcomeMessage.output({}, this.session))
+      } else if (_.isString(this.welcomeMessage.output)) {
+        botMsg.messageText = this.welcomeMessage.output
+      } else {
+        botMsg = Object.assign(botMsg, this.welcomeMessage.output)
+      }
+      setTimeout(() => this.queueBotSays(botMsg), 0)
+    }
     return Promise.resolve()
   }
 
@@ -258,18 +279,20 @@ class BotiumConnectorEcho {
       }
     }
 
-      const template = this.answers.find(a => a.input.findIndex(u => msg.messageText && msg.messageText.startsWith(u)) >= 0)
-      if (template && template.output) {
-        if (_.isFunction(template.output)) {
-          botMsg = Object.assign(botMsg, template.output(msg, this.session))
-        } else if (_.isString(template.output)) {
-          botMsg.messageText = template.output
-        } else {
-          botMsg = Object.assign(botMsg, template.output)
-        }
+    const template = this.answers.find(a => a.input.findIndex(u => msg.messageText && msg.messageText.startsWith(u)) >= 0)
+    if (template && template.output) {
+      if (_.isFunction(template.output)) {
+        botMsg = Object.assign(botMsg, template.output(msg, this.session))
+      } else if (_.isString(template.output)) {
+        botMsg.messageText = template.output
       } else {
-        botMsg.messageText = 'You said: ' + (msg.messageText || '-')
+        botMsg = Object.assign(botMsg, template.output)
       }
+    } else if (msg.buttons && msg.buttons.length > 0) {
+      botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text || msg.buttons[0].payload}`
+    } else {
+      botMsg.messageText = 'You said: ' + (msg.messageText || '-')
+    }
 
     botMsg.sourceData.session = JSON.parse(JSON.stringify(this.session))
     setTimeout(() => this.queueBotSays(botMsg), 0)
