@@ -13,6 +13,7 @@ class BotiumConnectorEcho {
     this.queueBotSays = queueBotSays
     this.caps = caps
     this.session = {}
+    this.welcomeMessages = []
     this.answers = [
       {
         input: ['help'],
@@ -241,9 +242,10 @@ class BotiumConnectorEcho {
       }
     }
     if (this.caps[Capabilities.ECHO_WELCOMEMESSAGE]) {
-      this.welcomeMessage = _.isString(this.caps[Capabilities.ECHO_WELCOMEMESSAGE])
+      const extraWelcomeMessages = _.isString(this.caps[Capabilities.ECHO_WELCOMEMESSAGE])
         ? JSON.parse(this.caps[Capabilities.ECHO_WELCOMEMESSAGE])
         : this.caps[Capabilities.ECHO_WELCOMEMESSAGE]
+      this.welcomeMessages = this.welcomeMessages.concat(extraWelcomeMessages)
     }
 
     return Promise.resolve()
@@ -253,16 +255,16 @@ class BotiumConnectorEcho {
     debug('Start called')
     this.session = {}
 
-    if (this.welcomeMessage) {
+    for (const welcomeMessage of this.welcomeMessages) {
       let botMsg = {
         sender: 'bot'
       }
-      if (_.isFunction(this.welcomeMessage.output)) {
-        botMsg = Object.assign(botMsg, this.welcomeMessage.output({}, this.session))
-      } else if (_.isString(this.welcomeMessage.output)) {
-        botMsg.messageText = this.welcomeMessage.output
+      if (_.isFunction(welcomeMessage.output)) {
+        botMsg = Object.assign(botMsg, welcomeMessage.output({}, this.session))
+      } else if (_.isString(welcomeMessage.output)) {
+        botMsg.messageText = welcomeMessage.output
       } else {
-        botMsg = Object.assign(botMsg, this.welcomeMessage.output)
+        botMsg = Object.assign(botMsg, welcomeMessage.output)
       }
       setTimeout(() => this.queueBotSays(botMsg), 0)
     }
