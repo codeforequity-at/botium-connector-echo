@@ -1,6 +1,6 @@
 {
   "name": "botium-connector-echo",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "",
   "main": "dist/botium-connector-echo-cjs.js",
   "module": "dist/botium-connector-echo-es.js",
@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/codeforequity-at/botium-connector-echo/issues"
   },
-  "homepage": "https://github.com/codeforequity-at/botium-connector-echo#readme",
+  "homepage": "https://www.botium.ai",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/node": "^7.8.7",
