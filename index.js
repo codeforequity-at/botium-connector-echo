@@ -6,7 +6,12 @@ const debug = require('debug')('botium-connector-echo')
 const Capabilities = {
   ECHO_ANSWERS: 'ECHO_ANSWERS',
   ECHO_WELCOMEMESSAGE: 'ECHO_WELCOMEMESSAGE',
-  ECHO_DELAY: 'ECHO_DELAY'
+  ECHO_DELAY: 'ECHO_DELAY',
+  ECHO_DELAY_INCREASE: 'ECHO_DELAY_INCREASE'
+}
+
+const GlobalState = {
+  delaySlowdown: 0
 }
 
 class BotiumConnectorEcho {
@@ -291,7 +296,11 @@ class BotiumConnectorEcho {
     }
 
     botMsg.sourceData.session = JSON.parse(JSON.stringify(this.session))
-    setTimeout(() => this.queueBotSays(botMsg), this.echoDelay)
+    setTimeout(() => this.queueBotSays(botMsg), this.echoDelay + GlobalState.delaySlowdown)
+
+    if (this.caps[Capabilities.ECHO_DELAY_INCREASE]) {
+      GlobalState.delaySlowdown += this.caps[Capabilities.ECHO_DELAY_INCREASE]
+    }
   }
 }
 
