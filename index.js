@@ -5,7 +5,8 @@ const debug = require('debug')('botium-connector-echo')
 
 const Capabilities = {
   ECHO_ANSWERS: 'ECHO_ANSWERS',
-  ECHO_WELCOMEMESSAGE: 'ECHO_WELCOMEMESSAGE'
+  ECHO_WELCOMEMESSAGE: 'ECHO_WELCOMEMESSAGE',
+  ECHO_DELAY: 'ECHO_DELAY'
 }
 
 class BotiumConnectorEcho {
@@ -224,16 +225,10 @@ class BotiumConnectorEcho {
         }
       }
     ]
-  }
-
-  Validate () {
-    debug('Validate called')
-    return Promise.resolve()
+    this.echoDelay = 0
   }
 
   Build () {
-    debug('Build called')
-
     if (this.caps[Capabilities.ECHO_ANSWERS]) {
       const extraAnswers = _.isString(this.caps[Capabilities.ECHO_ANSWERS]) ? JSON.parse(this.caps[Capabilities.ECHO_ANSWERS]) : this.caps[Capabilities.ECHO_ANSWERS]
       this.answers = this.answers.concat(extraAnswers)
@@ -247,12 +242,12 @@ class BotiumConnectorEcho {
         : this.caps[Capabilities.ECHO_WELCOMEMESSAGE]
       this.welcomeMessages = this.welcomeMessages.concat(extraWelcomeMessages)
     }
-
-    return Promise.resolve()
+    if (this.caps[Capabilities.ECHO_DELAY]) {
+      this.echoDelay = this.caps[Capabilities.ECHO_DELAY]
+    }
   }
 
   Start () {
-    debug('Start called')
     this.session = {}
 
     for (const welcomeMessage of this.welcomeMessages) {
@@ -268,7 +263,6 @@ class BotiumConnectorEcho {
       }
       setTimeout(() => this.queueBotSays(botMsg), 0)
     }
-    return Promise.resolve()
   }
 
   UserSays (msg) {
@@ -297,17 +291,7 @@ class BotiumConnectorEcho {
     }
 
     botMsg.sourceData.session = JSON.parse(JSON.stringify(this.session))
-    setTimeout(() => this.queueBotSays(botMsg), 0)
-  }
-
-  Stop () {
-    debug('Stop called')
-    return Promise.resolve()
-  }
-
-  Clean () {
-    debug('Clean called')
-    return Promise.resolve()
+    setTimeout(() => this.queueBotSays(botMsg), this.echoDelay)
   }
 }
 
