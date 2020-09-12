@@ -1,7 +1,7 @@
 {
   "name": "botium-connector-echo",
-  "version": "0.0.8",
-  "description": "",
+  "version": "0.0.9",
+  "description": "Botium Demo Connector",
   "main": "dist/botium-connector-echo-cjs.js",
   "module": "dist/botium-connector-echo-es.js",
   "scripts": {
@@ -20,25 +20,25 @@
   },
   "homepage": "https://www.botium.ai",
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/node": "^7.8.7",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
-    "eslint": "^6.8.0",
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
+    "eslint": "^7.8.1",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "rollup": "^1.32.0",
-    "rollup-plugin-babel": "^4.3.3",
+    "rollup": "^2.26.11",
+    "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2",
+    "@babel/runtime": "^7.11.2",
     "debug": "^4.1.1",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.20"
   }
 }
