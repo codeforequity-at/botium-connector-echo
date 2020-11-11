@@ -291,6 +291,22 @@ class BotiumConnectorEcho {
       }
     } else if (msg.buttons && msg.buttons.length > 0) {
       botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text || msg.buttons[0].payload}`
+    } else if (msg.media && msg.media.length > 0) {
+      const media = msg.media[0]
+      const mediaName = decodeURIComponent(path.basename(media.downloadUri || media.mediaUri) || '-')
+      botMsg.messageText = `RECEIVED FILE: ${mediaName}`
+      botMsg.media = [{
+        mediaUri: mediaName,
+        mimeType: media.mimeType,
+        buffer: media.buffer
+      }]
+      if (media.buffer) {
+        botMsg.attachments = [{
+          name: mediaName,
+          mimeType: media.mimeType,
+          base64: media.buffer.toString('base64')
+        }]
+      }
     } else {
       botMsg.messageText = 'You said: ' + (msg.messageText || '-')
     }

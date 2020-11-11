@@ -1,0 +1,7 @@
+sendmedia
+
+#me
+MEDIA media/file_example_MP3_700KB.mp3
+
+#bot
+MEDIA
