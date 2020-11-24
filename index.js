@@ -322,5 +322,123 @@ class BotiumConnectorEcho {
 
 module.exports = {
   PluginVersion: 1,
-  PluginClass: BotiumConnectorEcho
+  PluginClass: BotiumConnectorEcho,
+  Import: {
+    Handler: () => {
+      return {
+        convos: [
+          {
+            header: { name: 'TC01 - buttons' },
+            conversation: [
+              { sender: 'me', messageText: 'UTT_BUTTONS' },
+              {
+                sender: 'bot',
+                asserters: [
+                  {
+                    name: 'INTENT',
+                    args: ['buttons']
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            header: { name: 'TC02 - pictures' },
+            conversation: [
+              { sender: 'me', messageText: 'UTT_PICTURE' },
+              {
+                sender: 'bot',
+                asserters: [
+                  {
+                    name: 'INTENT',
+                    args: ['picture']
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            header: { name: 'TC02 - cards' },
+            conversation: [
+              { sender: 'me', messageText: 'UTT_CARD' },
+              {
+                sender: 'bot',
+                asserters: [
+                  {
+                    name: 'INTENT',
+                    args: ['card']
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        utterances: [
+          {
+            name: 'UTT_BUTTONS',
+            utterances: ['buttons', 'show me buttons', 'show me some buttons', 'give me buttons']
+          },
+          {
+            name: 'UTT_PICTURE',
+            utterances: ['picture', 'show me a picture', 'give me a picture']
+          },
+          {
+            name: 'UTT_CARD',
+            utterances: ['card', 'show me a card', 'give me a card']
+          }
+        ]
+      }
+    },
+    Args: {}
+  },
+  Export: {
+    Handler: ({ ...rest } = {}, { convos, utterances } = {}, { statusCallback } = {}) => {
+      if (statusCallback) {
+        statusCallback(`Exporting ${convos ? convos.length : 0} convo(s)`)
+        statusCallback(`Exporting ${utterances ? utterances.length : 0} utterance(s)`)
+      }
+      return {}
+    },
+    Args: {}
+  },
+  PluginDesc: {
+    name: 'Botium Sample Chatbot (Echo)',
+    provider: 'Botium',
+    features: {
+      intentResolution: true,
+      intentConfidenceScore: true,
+      alternateIntents: true,
+      entityResolution: true,
+      entityConfidenceScore: true,
+      testCaseGeneration: true,
+      testCaseExport: true,
+      sendAttachments: true
+    },
+    capabilities: [
+      {
+        name: Capabilities.ECHO_WELCOMEMESSAGE,
+        label: 'Welcome Messages',
+        description: 'JSON-Array holding the welcome messages to send for a new session',
+        type: 'json',
+        required: false,
+        advanced: true
+      },
+      {
+        name: Capabilities.ECHO_DELAY,
+        label: 'Delay response',
+        description: 'Delay for sending responses in milliseconds',
+        type: 'int',
+        required: false,
+        advanced: true
+      },
+      {
+        name: Capabilities.ECHO_DELAY_INCREASE,
+        label: 'Increase Delay',
+        description: 'Increase delay on each message in milliseconds',
+        type: 'int',
+        required: false,
+        advanced: true
+      }
+    ]
+  }
 }
