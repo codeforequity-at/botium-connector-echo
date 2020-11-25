@@ -412,7 +412,7 @@ module.exports = {
       entityConfidenceScore: true,
       testCaseGeneration: true,
       testCaseExport: true,
-      sendAttachments: true
+      audioInput: true
     },
     capabilities: [
       {
