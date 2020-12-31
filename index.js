@@ -276,7 +276,11 @@ class BotiumConnectorEcho {
     let botMsg = {
       sender: 'bot',
       sourceData: {
-        request: msg
+        request: {
+          messageText: msg.messageText,
+          buttons: msg.buttons,
+          media: msg.media
+        }
       }
     }
 
@@ -293,21 +297,17 @@ class BotiumConnectorEcho {
       botMsg.messageText = `BUTTON PRESSED: ${msg.buttons[0].text || msg.buttons[0].payload}`
     } else if (msg.media && msg.media.length > 0) {
       const media = msg.media[0]
-      let mediaUri = media.downloadUri || media.mediaUri || '-'
-      if (mediaUri.startsWith('file://')) {
-        const fileContent = fs.readFileSync(mediaUri.replace('file://', ''), { encoding: 'base64' })
-        mediaUri = `data:${media.mimeType};base64,${fileContent}`
-      }
       const mediaName = decodeURIComponent(path.basename(media.downloadUri || media.mediaUri) || '-')
       botMsg.messageText = `RECEIVED FILE: ${mediaName}`
       botMsg.media = [{
-        mediaUri: mediaUri,
+        mediaUri: media.mediaUri,
+        downloadUri: media.downloadUri,
         mimeType: media.mimeType,
         buffer: media.buffer
       }]
       if (media.buffer) {
         botMsg.attachments = [{
-          name: mediaUri,
+          name: mediaName,
           mimeType: media.mimeType,
           base64: media.buffer.toString('base64')
         }]
