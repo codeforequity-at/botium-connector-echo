@@ -1,0 +1,8 @@
+text_attachment
+
+#me
+text attachment
+
+#bot
+Here is a text attachment
+INTENT text_attachment

@@ -148,6 +148,25 @@ class BotiumConnectorEcho {
         }
       },
       {
+        input: ['text attachment', 'show me a text attachment', 'give me a text attachment'],
+        output: {
+          messageText: 'Here is a text attachment',
+          attachments: [
+            {
+              name: 'Text attachment',
+              mimeType: 'text/plain',
+              base64: Buffer.from('This is a sample of a text attachment').toString('base64')
+            }
+          ],
+          nlp: {
+            intent: {
+              name: 'text_attachment',
+              confidence: 0.8
+            }
+          }
+        }
+      },
+      {
         input: ['card', 'show me a card', 'give me a card'],
         output: {
           messageText: 'Here is a card',
