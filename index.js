@@ -40,6 +40,15 @@ class BotiumConnectorEcho {
         }
       },
       {
+        input: ['fail random', 'random fail'],
+        output: (msg, session) => {
+          throw new Error('Here is a random delivery failure')
+          return {
+            messageText: `Delivery succesful`,
+          }
+        }
+      },
+      {
         input: ['add to cart'],
         output: (msg, session) => {
           const item = msg.messageText.substr(11).trim()
