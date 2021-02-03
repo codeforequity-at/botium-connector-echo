@@ -42,11 +42,12 @@ class BotiumConnectorEcho {
       {
         input: ['fail random', 'random fail'],
         output: (msg, session) => {
-          if (Math.random() < 0.5) {
-            throw new Error('Here is a random delivery failure')
+          const possibility = Math.random()
+          if (possibility < 0.5) {
+            throw new Error(`Here is a random delivery failure (${possibility})`)
           }
           return {
-            messageText: 'Delivery succesful'
+            messageText: `Delivery succesful (${possibility})`
           }
         }
       },
