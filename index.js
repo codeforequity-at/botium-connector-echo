@@ -40,7 +40,7 @@ class BotiumConnectorEcho {
         }
       },
       {
-        input: ['fail random', 'random fail'],
+        input: ['random fail'],
         output: (msg, session) => {
           const possibility = Math.random()
           if (possibility < 0.5) {
