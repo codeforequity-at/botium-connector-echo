@@ -46,7 +46,7 @@ class BotiumConnectorEcho {
             throw new Error('Here is a random delivery failure')
           }
           return {
-            messageText: `Delivery succesful`,
+            messageText: 'Delivery succesful'
           }
         }
       },
