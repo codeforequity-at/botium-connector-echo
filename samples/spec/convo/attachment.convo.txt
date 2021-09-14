@@ -1,8 +1,8 @@
 attachment
 
 #me
-audio attachment
+attachment
 
 #bot
 An audio is attached to this message
-INTENT attachment
+INTENT audioattachment

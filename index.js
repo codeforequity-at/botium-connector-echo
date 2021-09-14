@@ -14,6 +14,22 @@ const GlobalState = {
   delaySlowdown: 0
 }
 
+const audioFile = 'file_example_MP3_700KB.mp3'
+let audioBuffer = null
+if (fs.existsSync(path.join(__dirname, audioFile))) {
+  audioBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, audioFile)))
+} else if (fs.existsSync(path.join(__dirname, '..', audioFile))) {
+  audioBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, '..', audioFile)))
+}
+
+const videoFile = 'mov_bbb.mp4'
+let videoBuffer = null
+if (fs.existsSync(path.join(__dirname, videoFile))) {
+  videoBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, videoFile)))
+} else if (fs.existsSync(path.join(__dirname, '..', videoFile))) {
+  videoBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, '..', videoFile)))
+}
+
 class BotiumConnectorEcho {
   constructor ({ queueBotSays, caps }) {
     this.queueBotSays = queueBotSays
@@ -129,7 +145,7 @@ class BotiumConnectorEcho {
         }
       },
       {
-        input: ['buttons', 'show me buttons', 'show me some buttons', 'give me buttons'],
+        input: ['button', 'buttons', 'show me buttons', 'show me some buttons', 'give me buttons', 'give me a button'],
         output: {
           messageText: 'Here are some buttons',
           buttons: [
@@ -145,7 +161,7 @@ class BotiumConnectorEcho {
         }
       },
       {
-        input: ['picture', 'show me a picture', 'give me a picture'],
+        input: ['picture', 'pictures', 'show me pictures', 'show me a picture', 'give me a picture', 'give me pictures'],
         output: {
           messageText: 'Here is a picture',
           media: [
@@ -182,15 +198,30 @@ class BotiumConnectorEcho {
         }
       },
       {
-        input: ['attachment', 'audio attachment'],
+        input: ['audio', 'show me an audio', 'give me an audio'],
         output: (msg, session) => {
-          const audioFile = 'file_example_MP3_700KB.mp3'
-          let audioBuffer = null
-          if (fs.existsSync(path.join(__dirname, audioFile))) {
-            audioBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, audioFile)))
-          } else if (fs.existsSync(path.join(__dirname, '..', audioFile))) {
-            audioBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, '..', audioFile)))
-          } else {
+          if (!audioBuffer) {
+            throw new Error(`Audio file ${audioFile} not found`)
+          }
+          return {
+            messageText: 'Here is an audio',
+            media: [{
+              mediaUri: `data:audio/mp3;base64,${audioBuffer.toString('base64')}`,
+              mimeType: 'audio/mp3'
+            }],
+            nlp: {
+              intent: {
+                name: 'audio',
+                confidence: 0.8
+              }
+            }
+          }
+        }
+      },
+      {
+        input: ['attachment', 'audioattachment'],
+        output: (msg, session) => {
+          if (!audioBuffer) {
             throw new Error(`Audio file ${audioFile} not found`)
           }
           return {
@@ -204,7 +235,7 @@ class BotiumConnectorEcho {
             ],
             nlp: {
               intent: {
-                name: 'attachment',
+                name: 'audioattachment',
                 confidence: 0.8
               }
             }
@@ -212,15 +243,30 @@ class BotiumConnectorEcho {
         }
       },
       {
-        input: ['video', 'video attachment'],
+        input: ['video', 'show me a video', 'give me a video'],
         output: (msg, session) => {
-          const videoFile = 'mov_bbb.mp4'
-          let videoBuffer = null
-          if (fs.existsSync(path.join(__dirname, videoFile))) {
-            videoBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, videoFile)))
-          } else if (fs.existsSync(path.join(__dirname, '..', videoFile))) {
-            videoBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, '..', videoFile)))
-          } else {
+          if (!videoBuffer) {
+            throw new Error(`Video file ${videoFile} not found`)
+          }
+          return {
+            messageText: 'Here is a video',
+            media: [{
+              mediaUri: `data:video/mp4;base64,${videoBuffer.toString('base64')}`,
+              mimeType: 'video/mp4'
+            }],
+            nlp: {
+              intent: {
+                name: 'video',
+                confidence: 0.8
+              }
+            }
+          }
+        }
+      },
+      {
+        input: ['videoattachment'],
+        output: (msg, session) => {
+          if (!videoBuffer) {
             throw new Error(`Video file ${videoFile} not found`)
           }
           return {
@@ -234,7 +280,7 @@ class BotiumConnectorEcho {
             ],
             nlp: {
               intent: {
-                name: 'video',
+                name: 'videoattachment',
                 confidence: 0.8
               }
             }
@@ -296,7 +342,22 @@ class BotiumConnectorEcho {
       }
     }
 
-    const template = this.answers.find(a => a.input.findIndex(u => msg.messageText && msg.messageText.startsWith(u)) >= 0)
+    let template = null
+    if (msg.messageText) {
+      template = this.answers.find(a => {
+        if (a.input.findIndex(u => u.toLowerCase() === msg.messageText.toLowerCase()) >= 0) return true
+        return false
+      })
+      if (!template) {
+        const parts = msg.messageText.split(' ')
+        if (parts.length > 1) {
+          template = this.answers.find(a => {
+            if (a.input.findIndex(u => u.toLowerCase().startsWith(parts[0].toLowerCase())) >= 0) return true
+            return false
+          })
+        }
+      }
+    }
     if (template && template.output) {
       if (_.isFunction(template.output)) {
         botMsg = Object.assign(botMsg, template.output(msg, this.session))
@@ -347,7 +408,7 @@ module.exports = {
           {
             header: { name: 'TC01 - buttons' },
             conversation: [
-              { sender: 'me', messageText: 'UTT_BUTTONS' },
+              { sender: 'me', messageText: 'buttons' },
               {
                 sender: 'bot',
                 asserters: [
@@ -362,7 +423,7 @@ module.exports = {
           {
             header: { name: 'TC02 - pictures' },
             conversation: [
-              { sender: 'me', messageText: 'UTT_PICTURE' },
+              { sender: 'me', messageText: 'picture' },
               {
                 sender: 'bot',
                 asserters: [
@@ -377,7 +438,7 @@ module.exports = {
           {
             header: { name: 'TC02 - cards' },
             conversation: [
-              { sender: 'me', messageText: 'UTT_CARD' },
+              { sender: 'me', messageText: 'card' },
               {
                 sender: 'bot',
                 asserters: [
@@ -392,15 +453,15 @@ module.exports = {
         ],
         utterances: [
           {
-            name: 'UTT_BUTTONS',
+            name: 'buttons',
             utterances: ['buttons', 'show me buttons', 'show me some buttons', 'give me buttons']
           },
           {
-            name: 'UTT_PICTURE',
+            name: 'picture',
             utterances: ['picture', 'show me a picture', 'give me a picture']
           },
           {
-            name: 'UTT_CARD',
+            name: 'card',
             utterances: ['card', 'show me a card', 'give me a card']
           }
         ]

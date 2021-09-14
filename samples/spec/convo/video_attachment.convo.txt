@@ -1,8 +1,8 @@
 video attachment
 
 #me
-video attachment
+videoattachment
 
 #bot
 A video is attached to this message
-INTENT video
+INTENT videoattachment
