@@ -317,7 +317,9 @@ class BotiumConnectorEcho {
       let botMsg = {
         sender: 'bot'
       }
-      if (_.isFunction(welcomeMessage.output)) {
+      if (_.isString(welcomeMessage)) {
+        botMsg.messageText = welcomeMessage
+      } else if (_.isFunction(welcomeMessage.output)) {
         botMsg = Object.assign(botMsg, welcomeMessage.output({}, this.session))
       } else if (_.isString(welcomeMessage.output)) {
         botMsg.messageText = welcomeMessage.output
@@ -496,7 +498,15 @@ module.exports = {
       {
         name: Capabilities.ECHO_WELCOMEMESSAGE,
         label: 'Welcome Messages',
-        description: 'JSON-Array holding the welcome messages to send for a new session',
+        description: 'JSON-Array holding the welcome messages to send for a new session (example: [ "Hello!", "My name is Dave. How can I help you ?" ])',
+        type: 'json',
+        required: false,
+        advanced: true
+      },
+      {
+        name: Capabilities.ECHO_ANSWERS,
+        label: 'Customize Responses',
+        description: 'JSON-Structure holding keywords to detect and response (example: { "input": "special", "output": { "messageText": "something special", "nlp": { "intent": { "name": "extra2", "confidence": 0.8 } } } })',
         type: 'json',
         required: false,
         advanced: true
