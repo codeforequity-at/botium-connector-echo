@@ -182,6 +182,37 @@ class BotiumConnectorEcho {
         }
       },
       {
+        input: ['form'],
+        output: {
+          messageText: 'Here is a formc',
+          forms: [
+            {
+              type: 'Text',
+              name: 'username',
+              label: 'User name',
+              value: 'Joe'
+            },
+            {
+              type: 'ChoiceSet',
+              name: 'title',
+              label: 'Title',
+              value: 'no',
+              options: [
+                { title: '<no title>', value: 'no' },
+                { title: 'Miss', value: 'miss' },
+                { title: 'Mr', value: 'mr' }
+              ]
+            }
+          ],
+          nlp: {
+            intent: {
+              name: 'formcard',
+              confidence: 0.8
+            }
+          }
+        }
+      },
+      {
         input: ['attachment', 'audio attachment'],
         output: (msg, session) => {
           const audioFile = 'file_example_MP3_700KB.mp3'
