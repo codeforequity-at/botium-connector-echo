@@ -502,13 +502,6 @@ module.exports = {
     },
     Args: {}
   },
-  Utils: {
-    GetAgentMetaData: async () => {
-      return {
-        name: 'Botium Sample Chatbot'
-      }
-    }
-  },
   Export: {
     Handler: ({ ...rest } = {}, { convos, utterances } = {}, { statusCallback } = {}) => {
       if (statusCallback) {
@@ -564,6 +557,17 @@ module.exports = {
         type: 'int',
         required: false,
         advanced: true
+      }
+    ],
+    actions: [
+      {
+        name: 'GetAgentMetaData',
+        description: 'GetAgentMetaData',
+        run: async (caps) => {
+          return {
+            name: 'Botium Sample Chatbot'
+          }
+        }
       }
     ]
   }
