@@ -10,13 +10,13 @@ Repeat bot message is set to: 3
 hello
 
 #bot
-you said: hello
+you said: hello (#1)
 
 #bot
-you said: hello
+you said: hello (#2)
 
 #bot
-you said: hello
+you said: hello (#3)
 
 #me
 set repeat to 1

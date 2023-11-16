@@ -381,8 +381,8 @@ class BotiumConnectorEcho {
     }
   }
 
-  UserSays (msg) {
-    debug('UserSays called, echo back')
+  async UserSays (msg) {
+    debug('UserSays called, echo back ' + msg.messageText)
 
     let botMsg = {
       sender: 'bot',
@@ -447,19 +447,31 @@ class BotiumConnectorEcho {
     if (GlobalState.repeatBotMessageToSet) {
       GlobalState.repeatBotMessage = 1
     }
-    for (let repeat = 0; repeat < (GlobalState.repeatBotMessage || this.caps[Capabilities.ECHO_REPEAT_BOT_MESSAGE] || 1); repeat++) {
-      setTimeout(() => this.queueBotSays(botMsg), this.echoDelay + GlobalState.delaySlowdown)
+    const maxRepeat = GlobalState.repeatBotMessage || this.caps[Capabilities.ECHO_REPEAT_BOT_MESSAGE] || 1
+    let origBotMsg
+    const theLoop = async () => {
+      for (let repeat = 0; repeat < maxRepeat; repeat++) {
+        if (maxRepeat > 1) {
+          if (!origBotMsg) {
+            origBotMsg = botMsg
+          }
+          botMsg = _.cloneDeep(origBotMsg)
+          botMsg.messageText = origBotMsg.messageText + ` (#${repeat + 1})`
+        }
 
-      if (this.caps[Capabilities.ECHO_DELAY_INCREASE]) {
-        GlobalState.delaySlowdown += this.caps[Capabilities.ECHO_DELAY_INCREASE]
+        await new Promise(resolve => setTimeout(resolve, this.echoDelay + GlobalState.delaySlowdown))
+        this.queueBotSays(botMsg)
+        if (this.caps[Capabilities.ECHO_DELAY_INCREASE]) {
+          GlobalState.delaySlowdown += this.caps[Capabilities.ECHO_DELAY_INCREASE]
+        }
+      }
+      // if the user says "set repeat to 2", then we answer always once
+      if (GlobalState.repeatBotMessageToSet) {
+        GlobalState.repeatBotMessage = GlobalState.repeatBotMessageToSet
+        GlobalState.repeatBotMessageToSet = null
       }
     }
-
-    // if the user says "set repeat to 2", then we answer always once
-    if (GlobalState.repeatBotMessageToSet) {
-      GlobalState.repeatBotMessage = GlobalState.repeatBotMessageToSet
-      GlobalState.repeatBotMessageToSet = null
-    }
+    setTimeout(theLoop, 0)
   }
 }
 
