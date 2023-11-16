@@ -560,6 +560,14 @@ module.exports = {
         type: 'int',
         required: false,
         advanced: true
+      },
+      {
+        name: Capabilities.ECHO_REPEAT_BOT_MESSAGE,
+        label: 'Repeats the bot message',
+        description: 'Repeats the same bot message multiple times',
+        type: 'int',
+        required: false,
+        advanced: true
       }
     ],
     actions: [
