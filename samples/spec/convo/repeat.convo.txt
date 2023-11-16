@@ -1,0 +1,37 @@
+repeat
+
+#me
+set repeat to 3
+
+#bot
+Repeat bot message is set to: 3
+
+#me
+hello
+
+#bot
+you said: hello
+
+#bot
+you said: hello
+
+#bot
+you said: hello
+
+#me
+set repeat to 1
+
+#bot
+Repeat bot message is set to: 1
+
+#me
+hello
+
+#bot
+you said: hello
+
+#me
+hello
+
+#bot
+you said: hello

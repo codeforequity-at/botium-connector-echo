@@ -318,6 +318,25 @@ class BotiumConnectorEcho {
             }
           }
         }
+      },
+      {
+        input: ['set repeat to'],
+        output: (msg, session) => {
+          const valuePart = msg.messageText.substring('set repeat to'.length).trim()
+          const repeatBotMessage = Number(valuePart)
+          if (repeatBotMessage > 0) {
+            GlobalState.repeatBotMessageToSet = repeatBotMessage
+          }
+          return {
+            messageText: repeatBotMessage > 0 ? `Repeat bot message is set to: ${valuePart}` : `Sorry dont undestand ${valuePart}`,
+            nlp: {
+              intent: {
+                name: 'setRepeatTo',
+                confidence: 0.8
+              }
+            }
+          }
+        }
       }
     ]
     this.echoDelay = 0
@@ -424,12 +443,22 @@ class BotiumConnectorEcho {
     }
 
     botMsg.sourceData.session = JSON.parse(JSON.stringify(this.session))
-    for (let repeat = 0; repeat < this.caps[Capabilities.ECHO_REPEAT_BOT_MESSAGE] || 1; repeat++) {
+    // if the user says "set repeat to 2", then we answer always once
+    if (GlobalState.repeatBotMessageToSet) {
+      GlobalState.repeatBotMessage = 1
+    }
+    for (let repeat = 0; repeat < (GlobalState.repeatBotMessage || this.caps[Capabilities.ECHO_REPEAT_BOT_MESSAGE] || 1); repeat++) {
       setTimeout(() => this.queueBotSays(botMsg), this.echoDelay + GlobalState.delaySlowdown)
 
       if (this.caps[Capabilities.ECHO_DELAY_INCREASE]) {
         GlobalState.delaySlowdown += this.caps[Capabilities.ECHO_DELAY_INCREASE]
       }
+    }
+
+    // if the user says "set repeat to 2", then we answer always once
+    if (GlobalState.repeatBotMessageToSet) {
+      GlobalState.repeatBotMessage = GlobalState.repeatBotMessageToSet
+      GlobalState.repeatBotMessageToSet = null
     }
   }
 }
