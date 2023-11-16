@@ -7,7 +7,8 @@ const Capabilities = {
   ECHO_ANSWERS: 'ECHO_ANSWERS',
   ECHO_WELCOMEMESSAGE: 'ECHO_WELCOMEMESSAGE',
   ECHO_DELAY: 'ECHO_DELAY',
-  ECHO_DELAY_INCREASE: 'ECHO_DELAY_INCREASE'
+  ECHO_DELAY_INCREASE: 'ECHO_DELAY_INCREASE',
+  ECHO_REPEAT_BOT_MESSAGE: 'ECHO_REPEAT_BOT_MESSAGE'
 }
 
 const GlobalState = {
@@ -423,10 +424,12 @@ class BotiumConnectorEcho {
     }
 
     botMsg.sourceData.session = JSON.parse(JSON.stringify(this.session))
-    setTimeout(() => this.queueBotSays(botMsg), this.echoDelay + GlobalState.delaySlowdown)
+    for (let repeat = 0; repeat < this.caps[Capabilities.ECHO_REPEAT_BOT_MESSAGE] || 1; repeat++) {
+      setTimeout(() => this.queueBotSays(botMsg), this.echoDelay + GlobalState.delaySlowdown)
 
-    if (this.caps[Capabilities.ECHO_DELAY_INCREASE]) {
-      GlobalState.delaySlowdown += this.caps[Capabilities.ECHO_DELAY_INCREASE]
+      if (this.caps[Capabilities.ECHO_DELAY_INCREASE]) {
+        GlobalState.delaySlowdown += this.caps[Capabilities.ECHO_DELAY_INCREASE]
+      }
     }
   }
 }

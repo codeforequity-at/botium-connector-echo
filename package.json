@@ -1,6 +1,6 @@
 {
   "name": "botium-connector-echo",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Botium Demo Connector",
   "main": "dist/botium-connector-echo-cjs.js",
   "module": "dist/botium-connector-echo-es.js",
