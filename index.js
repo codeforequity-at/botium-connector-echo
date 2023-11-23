@@ -337,6 +337,21 @@ class BotiumConnectorEcho {
             }
           }
         }
+      },
+      {
+        input: ['numbered list'],
+        output: (msg, session) => ({
+          messageText: `0. sometext.
+1.
+ 2.
+ 3.sdfdsf
+ 4. 3 days per week
+ 5.2.2
+ 6. 2.dfsdf
+ 7777.
+ 88euro
+ `
+        })
       }
     ]
     this.echoDelay = 0
