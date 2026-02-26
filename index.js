@@ -474,7 +474,7 @@ Finally, I can speak a paragraph with two sentences.
     } else if (msg.media && msg.media.length > 0) {
       const media = msg.media[0]
       const mediaName = decodeURIComponent(path.basename(media.downloadUri || media.mediaUri) || '-')
-      botMsg.messageText = `RECEIVED FILE: ${mediaName}`
+      botMsg.messageText = `RECEIVED FILE: ${mediaName} and text: ${msg.messageText || 'N/A'}`
       botMsg.media = [{
         mediaUri: media.mediaUri,
         downloadUri: media.downloadUri,
