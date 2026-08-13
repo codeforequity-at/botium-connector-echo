@@ -8,11 +8,14 @@ const Capabilities = {
   ECHO_WELCOMEMESSAGE: 'ECHO_WELCOMEMESSAGE',
   ECHO_DELAY: 'ECHO_DELAY',
   ECHO_DELAY_INCREASE: 'ECHO_DELAY_INCREASE',
+  ECHO_REQUEST_DELAY: 'ECHO_REQUEST_DELAY',
+  ECHO_REQUEST_DELAY_INCREASE: 'ECHO_REQUEST_DELAY_INCREASE',
   ECHO_REPEAT_BOT_MESSAGE: 'ECHO_REPEAT_BOT_MESSAGE'
 }
 
 const GlobalState = {
-  delaySlowdown: 0
+  delaySlowdown: 0,
+  requestDelaySlowdown: 0
 }
 
 const audioFile = 'file_example_MP3_700KB.mp3'
@@ -390,6 +393,7 @@ Finally, I can speak a paragraph with two sentences.
       }
     ]
     this.echoDelay = 0
+    this.echoRequestDelay = 0
   }
 
   Build () {
@@ -407,7 +411,10 @@ Finally, I can speak a paragraph with two sentences.
       this.welcomeMessages = this.welcomeMessages.concat(extraWelcomeMessages)
     }
     if (this.caps[Capabilities.ECHO_DELAY]) {
-      this.echoDelay = this.caps[Capabilities.ECHO_DELAY]
+      this.echoDelay = Number(this.caps[Capabilities.ECHO_DELAY]) || 0
+    }
+    if (this.caps[Capabilities.ECHO_REQUEST_DELAY]) {
+      this.echoRequestDelay = Number(this.caps[Capabilities.ECHO_REQUEST_DELAY]) || 0
     }
   }
 
@@ -433,6 +440,15 @@ Finally, I can speak a paragraph with two sentences.
 
   async UserSays (msg) {
     debug('UserSays called, echo back ' + msg.messageText)
+
+    const requestDelay = (this.echoRequestDelay || 0) + (GlobalState.requestDelaySlowdown || 0)
+    if (requestDelay > 0) {
+      debug(`UserSays delayed ${requestDelay}ms (request delay)`)
+      await new Promise(resolve => setTimeout(resolve, requestDelay))
+    }
+    if (this.caps[Capabilities.ECHO_REQUEST_DELAY_INCREASE]) {
+      GlobalState.requestDelaySlowdown += Number(this.caps[Capabilities.ECHO_REQUEST_DELAY_INCREASE]) || 0
+    }
 
     let botMsg = {
       sender: 'bot',
@@ -509,10 +525,14 @@ Finally, I can speak a paragraph with two sentences.
           botMsg.messageText = origBotMsg.messageText + ` (#${repeat + 1})`
         }
 
-        await new Promise(resolve => setTimeout(resolve, this.echoDelay + GlobalState.delaySlowdown))
+        const responseDelay = (this.echoDelay || 0) + (GlobalState.delaySlowdown || 0)
+        await new Promise(resolve => setTimeout(resolve, responseDelay))
+        if (responseDelay > 0) {
+          debug(`queueBotSays after delay ${responseDelay}ms (response delay)`)
+        }
         this.queueBotSays(botMsg)
         if (this.caps[Capabilities.ECHO_DELAY_INCREASE]) {
-          GlobalState.delaySlowdown += this.caps[Capabilities.ECHO_DELAY_INCREASE]
+          GlobalState.delaySlowdown += Number(this.caps[Capabilities.ECHO_DELAY_INCREASE]) || 0
         }
       }
       // if the user says "set repeat to 2", then we answer always once
@@ -639,15 +659,31 @@ module.exports = {
       {
         name: Capabilities.ECHO_DELAY,
         label: 'Delay response',
-        description: 'Delay for sending responses in milliseconds',
+        description: 'Delay (ms) before queuing the bot reply (WaitBotSays stays pending). For hang repro use a large value and set WAITFORBOTTIMEOUT at least as high.',
         type: 'int',
         required: false,
         advanced: true
       },
       {
         name: Capabilities.ECHO_DELAY_INCREASE,
-        label: 'Increase Delay',
-        description: 'Increase delay on each message in milliseconds',
+        label: 'Increase response delay',
+        description: 'Increase response delay on each bot reply in milliseconds',
+        type: 'int',
+        required: false,
+        advanced: true
+      },
+      {
+        name: Capabilities.ECHO_REQUEST_DELAY,
+        label: 'Delay request',
+        description: 'Delay (ms) before UserSays returns. For hang repro use a large value (e.g. 3600000).',
+        type: 'int',
+        required: false,
+        advanced: true
+      },
+      {
+        name: Capabilities.ECHO_REQUEST_DELAY_INCREASE,
+        label: 'Increase request delay',
+        description: 'Increase request delay on each UserSays in milliseconds',
         type: 'int',
         required: false,
         advanced: true
